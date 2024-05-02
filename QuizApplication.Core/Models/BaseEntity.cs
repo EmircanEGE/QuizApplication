@@ -1,9 +1,8 @@
-﻿namespace QuizApplication.Core.Models
+﻿namespace QuizApplication.Core.Models;
+
+public class BaseEntity
 {
-    public class BaseEntity
-    {
-        public int Id { get; set; }
-        public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
-        public DateTime? UpdatedTime { get; set; }
-    }
+    public int Id { get; set; }
+    public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedTime { get; set; }
 }
