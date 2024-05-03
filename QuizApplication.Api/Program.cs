@@ -24,6 +24,7 @@ builder.Services.AddScoped<IUserResponseRepository, UserResponseRepository>();
 builder.Services.AddScoped<IUserQuizResultRepository, UserQuizResultRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAnswerService, AnswerService>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
 
 var app = builder.Build();
 

@@ -30,7 +30,7 @@ public class AnswerService : IAnswerService
         await _unitOfWork.SaveChangesAsync();
         var result = await _answerRepository.GetAsync(x => x.Id == answer.Id).Include(x => x.Question)
             .FirstOrDefaultAsync();
-        return AnswerDto.Map(answer);
+        return AnswerDto.Map(result);
     }
 
     public async Task<AnswerDto> UpdateAsync(int id, string text, bool isCorrect, int questionId)
@@ -66,13 +66,13 @@ public class AnswerService : IAnswerService
 
     public async Task<List<AnswerDto>> GetAsync(string text, bool? isCorrect, int? questionId)
     {
-        var answers = _answerRepository.GetAsync(x => true);
+        var answers = _answerRepository.GetAsync(x => true).Include(x => x.Question);
         if (!string.IsNullOrWhiteSpace(text))
-            answers = answers.Where(x => x.Text == text);
+            answers = answers.Where(x => x.Text == text).Include(x => x.Question);
         if (isCorrect != null)
-            answers = answers.Where(x => x.IsCorrect == isCorrect);
+            answers = answers.Where(x => x.IsCorrect == isCorrect).Include(x => x.Question);
         if (questionId != null)
-            answers = answers.Where(x => x.QuestionId == questionId);
+            answers = answers.Where(x => x.QuestionId == questionId).Include(x => x.Question);
         return answers.Select(x => AnswerDto.Map(x)).ToList();
     }
 }
