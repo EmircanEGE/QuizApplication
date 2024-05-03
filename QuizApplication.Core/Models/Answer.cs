@@ -5,8 +5,8 @@ namespace QuizApplication.Core.Models;
 
 public class Answer : BaseEntity
 {
-    [Required]
-    public string Text { get; set; }
+    [Required] public string Text { get; set; }
+
     public bool IsCorrect { get; set; }
     [ForeignKey("Question")] public int QuestionId { get; set; }
     public virtual Question Question { get; set; }

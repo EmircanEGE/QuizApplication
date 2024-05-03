@@ -5,10 +5,9 @@ namespace QuizApplication.Core.Models;
 
 public class Quiz : BaseEntity
 {
-    [Required]
-    public string Title { get; set; }
-    [Required]
-    public string Description { get; set; }
+    [Required] public string Title { get; set; }
+
+    [Required] public string Description { get; set; }
 
     [ForeignKey("User")] public int CreatedBy { get; set; }
 
