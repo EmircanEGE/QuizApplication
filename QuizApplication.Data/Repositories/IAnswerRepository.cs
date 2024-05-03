@@ -1,5 +1,7 @@
-﻿namespace QuizApplication.Data.Repositories;
+﻿using QuizApplication.Core.Models;
 
-public interface IAnswerRepository
+namespace QuizApplication.Data.Repositories;
+
+public interface IAnswerRepository : IRepository<Answer>
 {
 }

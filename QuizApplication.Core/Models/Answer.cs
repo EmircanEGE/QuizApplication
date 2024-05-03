@@ -5,6 +5,17 @@ namespace QuizApplication.Core.Models;
 
 public class Answer : BaseEntity
 {
+    public Answer()
+    {
+    }
+
+    public Answer(string text, bool isCorrect, int questionId)
+    {
+        Text = text;
+        IsCorrect = isCorrect;
+        QuestionId = questionId;
+    }
+
     [Required] public string Text { get; set; }
 
     public bool IsCorrect { get; set; }

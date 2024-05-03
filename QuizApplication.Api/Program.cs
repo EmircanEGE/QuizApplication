@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using QuizApplication.Application.Services;
 using QuizApplication.Data;
 using QuizApplication.Data.Repositories;
 
@@ -22,6 +23,7 @@ builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
 builder.Services.AddScoped<IUserResponseRepository, UserResponseRepository>();
 builder.Services.AddScoped<IUserQuizResultRepository, UserQuizResultRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IAnswerService, AnswerService>();
 
 var app = builder.Build();
 
