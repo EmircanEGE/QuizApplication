@@ -31,7 +31,7 @@ public class QuestionController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> Delete(int id)
     {
-        _questionService.Delete(id);
+        await _questionService.DeleteAsync(id);
         return NoContent();
     }
 

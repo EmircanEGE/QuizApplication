@@ -7,6 +7,7 @@ public class AnswerDto : BaseDto
     public string Text { get; set; }
     public bool IsCorrect { get; set; }
     public int QuestionId { get; set; }
+    public QuestionDto? Question { get; set; }
 
     public static AnswerDto Map(Answer answer)
     {
@@ -17,7 +18,8 @@ public class AnswerDto : BaseDto
             UpdatedTime = answer.UpdatedTime,
             Text = answer.Text,
             IsCorrect = answer.IsCorrect,
-            QuestionId = answer.QuestionId
+            QuestionId = answer.QuestionId,
+            Question = answer.Question == null ? null : QuestionDto.Map(answer.Question)
         };
     }
 }

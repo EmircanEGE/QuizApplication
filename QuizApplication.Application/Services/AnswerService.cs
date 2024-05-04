@@ -50,8 +50,6 @@ public class AnswerService : IAnswerService
     public async Task DeleteAsync(int id)
     {
         var answer = await _answerRepository.GetAsync(x => x.Id == id).FirstOrDefaultAsync();
-        if (answer == null) return;
-
         _answerRepository.Delete(answer);
         await _unitOfWork.SaveChangesAsync();
     }

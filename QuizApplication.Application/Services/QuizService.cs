@@ -37,20 +37,18 @@ public class QuizService : IQuizService
         var user = await _userRepository.GetAsync(x => x.Id == createdBy).FirstOrDefaultAsync();
         if (user == null) return new QuizDto();
 
-        var quiz = await _quizRepository.GetAsync(x => x.Id == id).FirstOrDefaultAsync();
+        var quiz = await _quizRepository.GetAsync(x => x.Id == id).Include(x => x.User).FirstOrDefaultAsync();
         if (quiz == null) return new QuizDto();
 
-        quiz = new Quiz(title, description, createdBy);
+        quiz.Update(title, description, createdBy);
         _quizRepository.Update(quiz);
         await _unitOfWork.SaveChangesAsync();
         return QuizDto.Map(quiz);
     }
 
-    public async Task Delete(int id)
+    public async Task DeleteAsync(int id)
     {
         var quiz = await _quizRepository.GetAsync(x => x.Id == id).FirstOrDefaultAsync();
-        if (quiz == null) return;
-
         _quizRepository.Delete(quiz);
         await _unitOfWork.SaveChangesAsync();
     }

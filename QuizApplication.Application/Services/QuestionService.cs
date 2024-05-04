@@ -38,20 +38,18 @@ public class QuestionService : IQuestionService
         var quiz = await _quizRepository.GetAsync(x => x.Id == quizId).FirstOrDefaultAsync();
         if (quiz == null) return new QuestionDto();
 
-        var question = await _questionRepository.GetAsync(x => x.Id == id).FirstOrDefaultAsync();
+        var question = await _questionRepository.GetAsync(x => x.Id == id).Include(x => x.Quiz).FirstOrDefaultAsync();
         if (question == null) return new QuestionDto();
 
-        question = new Question(text, quizId);
+        question.Update(text, quizId);
         _questionRepository.Update(question);
         await _unitOfWork.SaveChangesAsync();
         return QuestionDto.Map(question);
     }
 
-    public async Task Delete(int id)
+    public async Task DeleteAsync(int id)
     {
         var question = await _questionRepository.GetAsync(x => x.Id == id).FirstOrDefaultAsync();
-        if (question == null) return;
-
         _questionRepository.Delete(question);
         await _unitOfWork.SaveChangesAsync();
     }
