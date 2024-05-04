@@ -25,19 +25,7 @@ public class UserService : IUserService
         var result = await _userRepository.GetAsync(x => x.Id == user.Id).FirstOrDefaultAsync();
         return UserDto.Map(result);
     }
-
-    public async Task<List<UserDto>> GetAsync(string fullname, string email, string password)
-    {
-        var user = _userRepository.GetAsync(x => true);
-        if (!string.IsNullOrWhiteSpace(fullname))
-            user = user.Where(x => x.FullName == fullname);
-        if (!string.IsNullOrWhiteSpace(email))
-            user = user.Where(x => x.FullName == email);
-        if (!string.IsNullOrWhiteSpace(password))
-            user = user.Where(x => x.FullName == password);
-        return user.Select(x => UserDto.Map(x)).ToList();
-    }
-
+    
     public async Task<UserDto> UpdateAsync(int id, string fullName, string email, string password)
     {
         var user = await _userRepository.GetAsync(x => x.Id == id).FirstOrDefaultAsync();
@@ -52,5 +40,24 @@ public class UserService : IUserService
         var user = await _userRepository.GetAsync(x => x.Id == id).FirstOrDefaultAsync();
         _userRepository.Delete(user);
         await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task<UserDto> GetByIdAsync(int id)
+    {
+        var user = await _userRepository.GetAsync(x => x.Id == id).FirstOrDefaultAsync();
+        if(user == null) return new UserDto();
+        return UserDto.Map(user);
+    }
+
+    public async Task<List<UserDto>> GetAsync(string fullname, string email, string password)
+    {
+        var user = _userRepository.GetAsync(x => true);
+        if (!string.IsNullOrWhiteSpace(fullname))
+            user = user.Where(x => x.FullName == fullname);
+        if (!string.IsNullOrWhiteSpace(email))
+            user = user.Where(x => x.FullName == email);
+        if (!string.IsNullOrWhiteSpace(password))
+            user = user.Where(x => x.FullName == password);
+        return user.Select(x => UserDto.Map(x)).ToList();
     }
 }

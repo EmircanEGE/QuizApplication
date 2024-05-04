@@ -9,8 +9,6 @@ public class UserQuizResult : BaseEntity
     public virtual User User { get; set; }
 
     [ForeignKey("Quiz")] public int QuizId { get; set; }
-
-    public virtual Quiz Quiz { get; set; }
     public int Score { get; set; }
-    public virtual ICollection<UserResponse> UserResponses { get; set; }
+    public virtual Quiz Quiz { get; set; }
 }

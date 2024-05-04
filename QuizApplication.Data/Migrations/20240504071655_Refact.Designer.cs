@@ -92,7 +92,7 @@ namespace QuizApplication.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CreatedBy")
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedTime")
@@ -111,7 +111,7 @@ namespace QuizApplication.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedBy");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Quizzes");
                 });
@@ -242,7 +242,7 @@ namespace QuizApplication.Data.Migrations
                 {
                     b.HasOne("QuizApplication.Core.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("CreatedBy")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

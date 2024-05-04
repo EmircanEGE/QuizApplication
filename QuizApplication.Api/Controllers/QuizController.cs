@@ -15,16 +15,16 @@ public class QuizController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(string title, string description, int createdBy)
+    public async Task<IActionResult> Create(string title, string description, int userId)
     {
-        var result = await _quizService.CreateAsync(title, description, createdBy);
+        var result = await _quizService.CreateAsync(title, description, userId);
         return Ok(result);
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(int id, string title, string description, int createdBy)
+    public async Task<IActionResult> Update(int id, string title, string description, int userId)
     {
-        var result = await _quizService.UpdateAsync(id, title, description, createdBy);
+        var result = await _quizService.UpdateAsync(id, title, description, userId);
         return Ok(result);
     }
 
@@ -43,9 +43,9 @@ public class QuizController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get(string title, string description, int? createdBy)
+    public async Task<IActionResult> Get(string title, string description, int? userId)
     {
-        var result = await _quizService.GetAsync(title, description, createdBy);
+        var result = await _quizService.GetAsync(title, description, userId);
         return Ok(result);
     }
 }

@@ -95,7 +95,7 @@ namespace QuizApplication.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CreatedBy")
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedTime")

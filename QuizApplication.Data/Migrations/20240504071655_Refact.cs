@@ -17,12 +17,12 @@ namespace QuizApplication.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Quizzes_CreatedBy",
                 table: "Quizzes",
-                column: "CreatedBy");
+                column: "UserId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Quizzes_Users_CreatedBy",
                 table: "Quizzes",
-                column: "CreatedBy",
+                column: "UserId",
                 principalTable: "Users",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);

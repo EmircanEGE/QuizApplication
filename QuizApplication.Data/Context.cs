@@ -14,5 +14,4 @@ public class Context : DbContext
     public DbSet<Answer> Answers { get; set; }
     public DbSet<Quiz> Quizzes { get; set; }
     public DbSet<UserQuizResult> QuizResults { get; set; }
-    public DbSet<UserResponse> UserResponses { get; set; }
 }

@@ -19,12 +19,12 @@ public class QuizService : IQuizService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<QuizDto> CreateAsync(string title, string description, int createdBy)
+    public async Task<QuizDto> CreateAsync(string title, string description, int userId)
     {
-        var user = await _userRepository.GetAsync(x => x.Id == createdBy).FirstOrDefaultAsync();
+        var user = await _userRepository.GetAsync(x => x.Id == userId).FirstOrDefaultAsync();
         if (user == null) return new QuizDto();
 
-        var quiz = new Quiz(title, description, createdBy);
+        var quiz = new Quiz(title, description, userId);
         await _quizRepository.InsertAsync(quiz);
         await _unitOfWork.SaveChangesAsync();
         var result = await _quizRepository.GetAsync(x => x.Id == quiz.Id).Include(x => x.User)
@@ -32,15 +32,15 @@ public class QuizService : IQuizService
         return QuizDto.Map(result);
     }
 
-    public async Task<QuizDto> UpdateAsync(int id, string title, string description, int createdBy)
+    public async Task<QuizDto> UpdateAsync(int id, string title, string description, int userId)
     {
-        var user = await _userRepository.GetAsync(x => x.Id == createdBy).FirstOrDefaultAsync();
+        var user = await _userRepository.GetAsync(x => x.Id == userId).FirstOrDefaultAsync();
         if (user == null) return new QuizDto();
 
         var quiz = await _quizRepository.GetAsync(x => x.Id == id).Include(x => x.User).FirstOrDefaultAsync();
         if (quiz == null) return new QuizDto();
 
-        quiz.Update(title, description, createdBy);
+        quiz.Update(title, description, userId);
         _quizRepository.Update(quiz);
         await _unitOfWork.SaveChangesAsync();
         return QuizDto.Map(quiz);
@@ -60,15 +60,15 @@ public class QuizService : IQuizService
         return QuizDto.Map(quiz);
     }
 
-    public async Task<List<QuizDto>> GetAsync(string title, string description, int? createdBy)
+    public async Task<List<QuizDto>> GetAsync(string title, string description, int? userId)
     {
         var quizzes = _quizRepository.GetAsync(x => true).Include(x => x.User);
         if (!string.IsNullOrWhiteSpace(title))
             quizzes = quizzes.Where(x => x.Title == title).Include(x => x.User);
         if (!string.IsNullOrWhiteSpace(description))
             quizzes = quizzes.Where(x => x.Description == description).Include(x => x.User);
-        if (createdBy != null)
-            quizzes = quizzes.Where(x => x.CreatedBy == createdBy).Include(x => x.User);
+        if (userId != null)
+            quizzes = quizzes.Where(x => x.UserId == userId).Include(x => x.User);
         return quizzes.Select(x => QuizDto.Map(x)).ToList();
     }
 }
