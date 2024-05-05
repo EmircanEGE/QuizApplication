@@ -2,12 +2,16 @@ using Microsoft.EntityFrameworkCore;
 using QuizApplication.Application.Services;
 using QuizApplication.Data;
 using QuizApplication.Data.Repositories;
+using System.Reflection;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddFluentValidationAutoValidation().AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 var postgresSqlConfiguration = builder.Configuration.GetConnectionString("PostgresConnection");
 builder.Services.AddDbContext<Context>(options => options.UseNpgsql(postgresSqlConfiguration));

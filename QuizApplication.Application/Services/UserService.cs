@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuizApplication.Application.Dtos;
+using QuizApplication.Application.Extensions;
 using QuizApplication.Core.Models;
 using QuizApplication.Data;
 using QuizApplication.Data.Repositories;
@@ -19,7 +20,8 @@ public class UserService : IUserService
 
     public async Task<UserDto> CreateAsync(string fullName, string email, string password)
     {
-        var user = new User(fullName, email, password);
+        var passwordHash = PasswordHasher.Hash(password);
+        var user = new User(fullName, email, passwordHash);
         await _userRepository.InsertAsync(user);
         await _unitOfWork.SaveChangesAsync();
         var result = await _userRepository.GetAsync(x => x.Id == user.Id).FirstOrDefaultAsync();
@@ -49,15 +51,13 @@ public class UserService : IUserService
         return UserDto.Map(user);
     }
 
-    public async Task<List<UserDto>> GetAsync(string fullname, string email, string password)
+    public async Task<List<UserDto>> GetAsync(string fullname, string email)
     {
         var user = _userRepository.GetAsync(x => true);
         if (!string.IsNullOrWhiteSpace(fullname))
             user = user.Where(x => x.FullName == fullname);
         if (!string.IsNullOrWhiteSpace(email))
             user = user.Where(x => x.FullName == email);
-        if (!string.IsNullOrWhiteSpace(password))
-            user = user.Where(x => x.FullName == password);
         return user.Select(x => UserDto.Map(x)).ToList();
     }
 }

@@ -15,11 +15,11 @@ public class User : BaseEntity
         Password = password;
     }
 
-    [Required] public string FullName { get; set; }
+    public string FullName { get; set; }
 
-    [EmailAddress] public string Email { get; set; }
+    public string Email { get; set; }
 
-    [Required] public string Password { get; set; }
+    public string Password { get; set; }
 
     public void Update(string fullName, string email, string password)
     {

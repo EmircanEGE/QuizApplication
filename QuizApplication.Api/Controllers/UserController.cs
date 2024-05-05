@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using QuizApplication.Application.Dtos;
 using QuizApplication.Application.Services;
+using QuizApplication.Core.Models;
 
 namespace QuizApplication.Api.Controllers;
 
@@ -15,9 +17,9 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(string fullName, string email, string password)
+    public async Task<IActionResult> Create(UserDto request)
     {
-        var result = await _userService.CreateAsync(fullName, email, password);
+        var result = await _userService.CreateAsync(request.FullName, request.Email, request.Password);
         return Ok(result);
     }
 
@@ -43,9 +45,9 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get(string fullName, string email, string password)
+    public async Task<IActionResult> Get(string fullName, string email)
     {
-        var result = await _userService.GetAsync(fullName, email, password);
+        var result = await _userService.GetAsync(fullName, email);
         return Ok(result);
     }
 }
