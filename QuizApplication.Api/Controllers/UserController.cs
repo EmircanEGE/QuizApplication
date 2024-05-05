@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using QuizApplication.Api.Models.User;
 using QuizApplication.Application.Dtos;
 using QuizApplication.Application.Services;
 using QuizApplication.Core.Models;
@@ -17,21 +18,21 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(UserDto request)
+    public async Task<IActionResult> Create([FromBody] UserCreateRequest request)
     {
         var result = await _userService.CreateAsync(request.FullName, request.Email, request.Password);
         return Ok(result);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update(int id, string fullName, string email, string password)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UserUpdateRequest request)
     {
-        var result = _userService.UpdateAsync(id, fullName, email, password);
+        var result = await _userService.UpdateAsync(id, request.FullName, request.Email, request.Password);
         return Ok(result);
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
     {
         await _userService.DeleteAsync(id);
         return NoContent();

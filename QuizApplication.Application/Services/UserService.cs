@@ -31,7 +31,9 @@ public class UserService : IUserService
     public async Task<UserDto> UpdateAsync(int id, string fullName, string email, string password)
     {
         var user = await _userRepository.GetAsync(x => x.Id == id).FirstOrDefaultAsync();
-        user.Update(fullName, email, password);
+        if (user == null) return new UserDto();
+        var passwordHash = PasswordHasher.Hash(password);
+        user.Update(fullName, email, passwordHash);
         _userRepository.Update(user);
         await _unitOfWork.SaveChangesAsync();
         return UserDto.Map(user);
