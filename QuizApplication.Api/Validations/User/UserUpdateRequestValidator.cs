@@ -1,17 +1,15 @@
 ﻿using FluentValidation;
 using QuizApplication.Api.Models.User;
-using QuizApplication.Application.Dtos;
 
-namespace QuizApplication.Api.Validations
+namespace QuizApplication.Api.Validations.User
 {
-    public class UserCreateRequestValidator : AbstractValidator<UserCreateRequest>
+    public class UserUpdateRequestValidator : AbstractValidator<UserUpdateRequest>
     {
-        public UserCreateRequestValidator()
+        public UserUpdateRequestValidator()
         {
             RuleFor(x => x.FullName).NotEmpty();
             RuleFor(x => x.Email).NotEmpty().EmailAddress();
             RuleFor(x => x.Password).NotEmpty().MaximumLength(16);
         }
-
     }
 }
