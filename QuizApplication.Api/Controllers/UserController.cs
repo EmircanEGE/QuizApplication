@@ -46,7 +46,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get(string fullName, string email)
+    public async Task<IActionResult> Get([FromQuery] string fullName, string email)
     {
         var result = await _userService.GetAsync(fullName, email);
         return Ok(result);

@@ -22,11 +22,12 @@ public class Answer : BaseEntity
     [ForeignKey("Question")] public int QuestionId { get; set; }
     public virtual Question Question { get; set; }
 
-    public void Update(string text, bool isCorrect, int questionId)
+    public void Update(string text, bool isCorrect, int questionId, Question question)
     {
         Text = text;
         IsCorrect = isCorrect;
         QuestionId = questionId;
+        Question = question;
         UpdatedTime = DateTime.UtcNow;
     }
 }

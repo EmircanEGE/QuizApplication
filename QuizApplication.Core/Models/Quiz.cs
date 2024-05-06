@@ -25,11 +25,12 @@ public class Quiz : BaseEntity
 
     public virtual ICollection<Question> Questions { get; set; }
 
-    public void Update(string title, string description, int userId)
+    public void Update(string title, string description, int userId, User user)
     {
         Title = title;
         Description = description;
         UserId = userId;
+        User = user;
         UpdatedTime = DateTime.UtcNow;
     }
 }

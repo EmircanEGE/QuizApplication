@@ -41,7 +41,7 @@ public class AnswerService : IAnswerService
         var answer = await _answerRepository.GetAsync(x => x.Id == id).Include(x => x.Question).FirstOrDefaultAsync();
         if (answer == null) return new AnswerDto();
 
-        answer.Update(text, isCorrect, questionId);
+        answer.Update(text, isCorrect, questionId, question);
         _answerRepository.Update(answer);
         await _unitOfWork.SaveChangesAsync();
         return AnswerDto.Map(answer);

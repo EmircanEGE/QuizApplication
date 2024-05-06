@@ -41,7 +41,7 @@ public class QuestionService : IQuestionService
         var question = await _questionRepository.GetAsync(x => x.Id == id).Include(x => x.Quiz).FirstOrDefaultAsync();
         if (question == null) return new QuestionDto();
 
-        question.Update(text, quizId);
+        question.Update(text, quizId, quiz);
         _questionRepository.Update(question);
         await _unitOfWork.SaveChangesAsync();
         return QuestionDto.Map(question);

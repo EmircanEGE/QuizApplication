@@ -59,7 +59,7 @@ public class UserService : IUserService
         if (!string.IsNullOrWhiteSpace(fullname))
             user = user.Where(x => x.FullName == fullname);
         if (!string.IsNullOrWhiteSpace(email))
-            user = user.Where(x => x.FullName == email);
+            user = user.Where(x => x.Email == email);
         return user.Select(x => UserDto.Map(x)).ToList();
     }
 }

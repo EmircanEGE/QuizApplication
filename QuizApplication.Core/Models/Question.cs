@@ -23,10 +23,11 @@ public class Question : BaseEntity
 
     public virtual ICollection<Answer> Answers { get; set; }
 
-    public void Update(string text, int quizId)
+    public void Update(string text, int quizId, Quiz quiz)
     {
         Text = text;
         QuizId = quizId;
+        Quiz = quiz;
         UpdatedTime = DateTime.UtcNow;
     }
 }

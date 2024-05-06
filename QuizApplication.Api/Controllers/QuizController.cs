@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using QuizApplication.Api.Models.Quiz;
 using QuizApplication.Application.Services;
 
 namespace QuizApplication.Api.Controllers;
@@ -15,21 +16,21 @@ public class QuizController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(string title, string description, int userId)
+    public async Task<IActionResult> Create([FromBody] QuizCreateRequest request)
     {
-        var result = await _quizService.CreateAsync(title, description, userId);
+        var result = await _quizService.CreateAsync(request.Title, request.Description, request.UserId);
         return Ok(result);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> Update(int id, string title, string description, int userId)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] QuizUpdateRequest request)
     {
-        var result = await _quizService.UpdateAsync(id, title, description, userId);
+        var result = await _quizService.UpdateAsync(id, request.Title, request.Description, request.UserId);
         return Ok(result);
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
     {
         _quizService.DeleteAsync(id);
         return NoContent();
@@ -43,7 +44,7 @@ public class QuizController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get(string title, string description, int? userId)
+    public async Task<IActionResult> Get([FromQuery] string title, string description, int? userId)
     {
         var result = await _quizService.GetAsync(title, description, userId);
         return Ok(result);
