@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QuizApplication.Api.Models.Answer;
 using QuizApplication.Application.Services;
 
@@ -6,6 +7,7 @@ namespace QuizApplication.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class AnswerController : ControllerBase
 {
     private readonly IAnswerService _answerService;

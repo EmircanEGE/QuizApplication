@@ -9,4 +9,5 @@ public interface IUserService
     Task DeleteAsync(int id);
     Task<UserDto> GetByIdAsync(int id);
     Task<List<UserDto>> GetAsync(string fullname, string email);
+    Task<UserDto> AuthenticateAsync(string email, string password);
 }

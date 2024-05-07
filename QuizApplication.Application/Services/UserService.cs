@@ -62,4 +62,11 @@ public class UserService : IUserService
             user = user.Where(x => x.Email == email);
         return user.Select(x => UserDto.Map(x)).ToList();
     }
+
+    public async Task<UserDto> AuthenticateAsync(string email, string password)
+    {
+        var user = await _userRepository.GetAsync(x => x.Email == email && x.Password == password).FirstOrDefaultAsync();
+        if (user == null) return null;
+        return UserDto.Map(user);
+    }
 }

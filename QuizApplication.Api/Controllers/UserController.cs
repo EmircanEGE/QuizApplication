@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QuizApplication.Api.Models.User;
-using QuizApplication.Application.Dtos;
 using QuizApplication.Application.Services;
-using QuizApplication.Core.Models;
 
 namespace QuizApplication.Api.Controllers;
 
@@ -11,12 +10,26 @@ namespace QuizApplication.Api.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly ITokenService _tokenService;
 
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, ITokenService tokenService)
     {
         _userService = userService;
+        _tokenService = tokenService;
     }
 
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
+    {
+        var user = await _userService.AuthenticateAsync(request.Email, request.Password);
+        if (user == null)
+        {
+            return Unauthorized("Invalid email or password");
+        }
+        var token = _tokenService.GenerateToken(user);
+        return Ok(new { Token = token });
+    }
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] UserCreateRequest request)
     {
@@ -24,6 +37,7 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UserUpdateRequest request)
     {
@@ -31,6 +45,7 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
@@ -38,6 +53,7 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
