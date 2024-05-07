@@ -66,11 +66,13 @@ public class UserService : IUserService
         return user.Select(x => UserDto.Map(x)).ToList();
     }
 
-    public async Task<string> AuthenticateAsync(string email, string password)
+    public async Task<LoginResponse> AuthenticateAsync(string email, string password)
     {
         var user = await _userRepository.GetAsync(x => x.Email == email && x.Password == password).FirstOrDefaultAsync();
         if (user == null) return null;
         var userDto = UserDto.Map(user);
-        return _tokenService.GenerateToken(userDto);
+        var response = new LoginResponse();
+        response.Token = _tokenService.GenerateToken(userDto);
+        return response;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using QuizApplication.Application.Dtos;
+using QuizApplication.Core.Models;
 
 namespace QuizApplication.Application.Services;
 
@@ -9,5 +10,5 @@ public interface IUserService
     Task DeleteAsync(int id);
     Task<UserDto> GetByIdAsync(int id);
     Task<List<UserDto>> GetAsync(string fullname, string email);
-    Task<string> AuthenticateAsync(string email, string password);
+    Task<LoginResponse> AuthenticateAsync(string email, string password);
 }
