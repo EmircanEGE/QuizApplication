@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using QuizApplication.Api;
 using QuizApplication.Application.Dtos;
 using QuizApplication.Application.Extensions;
 using QuizApplication.Core.Models;
@@ -11,11 +12,13 @@ public class UserService : IUserService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
+    private readonly ITokenService _tokenService;
 
-    public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork)
+    public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, ITokenService tokenService)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _tokenService = tokenService;
     }
 
     public async Task<UserDto> CreateAsync(string fullName, string email, string password)
@@ -63,10 +66,11 @@ public class UserService : IUserService
         return user.Select(x => UserDto.Map(x)).ToList();
     }
 
-    public async Task<UserDto> AuthenticateAsync(string email, string password)
+    public async Task<string> AuthenticateAsync(string email, string password)
     {
         var user = await _userRepository.GetAsync(x => x.Email == email && x.Password == password).FirstOrDefaultAsync();
         if (user == null) return null;
-        return UserDto.Map(user);
+        var userDto = UserDto.Map(user);
+        return _tokenService.GenerateToken(userDto);
     }
 }
