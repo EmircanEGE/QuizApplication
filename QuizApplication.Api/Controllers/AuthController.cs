@@ -21,7 +21,7 @@ namespace QuizApplication.Api.Controllers
         {
             var result = await _userService.AuthenticateAsync(request.Email, request.Password);
             if(result == null) return Unauthorized("Invalid email or password");
-            return Ok(result);
+            return Ok(result.Token);
         }
     }
 }

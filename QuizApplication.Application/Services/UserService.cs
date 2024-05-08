@@ -21,25 +21,24 @@ public class UserService : IUserService
         _tokenService = tokenService;
     }
 
-    public async Task<UserDto> CreateAsync(string fullName, string email, string password)
+    public async Task<ApiResponse<UserDto>> CreateAsync(string fullName, string email, string password)
     {
         var passwordHash = PasswordHasher.Hash(password);
         var user = new User(fullName, email, passwordHash);
         await _userRepository.InsertAsync(user);
         await _unitOfWork.SaveChangesAsync();
-        var result = await _userRepository.GetAsync(x => x.Id == user.Id).FirstOrDefaultAsync();
-        return UserDto.Map(result);
+        return new ApiResponse<UserDto>(201, "User created successfully.", UserDto.Map(user));
     }
     
-    public async Task<UserDto> UpdateAsync(int id, string fullName, string email, string password)
+    public async Task<ApiResponse<UserDto>> UpdateAsync(int id, string fullName, string email, string password)
     {
         var user = await _userRepository.GetAsync(x => x.Id == id).FirstOrDefaultAsync();
-        if (user == null) return new UserDto();
+        if (user == null) return new ApiResponse<UserDto>(404, $"User id = {id} not found!", new UserDto());
         var passwordHash = PasswordHasher.Hash(password);
         user.Update(fullName, email, passwordHash);
         _userRepository.Update(user);
         await _unitOfWork.SaveChangesAsync();
-        return UserDto.Map(user);
+        return new ApiResponse<UserDto>(204, "User updated successfully.", UserDto.Map(user));
     }
 
     public async Task DeleteAsync(int id)
@@ -49,11 +48,11 @@ public class UserService : IUserService
         await _unitOfWork.SaveChangesAsync();
     }
 
-    public async Task<UserDto> GetByIdAsync(int id)
+    public async Task<ApiResponse<UserDto>> GetByIdAsync(int id)
     {
         var user = await _userRepository.GetAsync(x => x.Id == id).FirstOrDefaultAsync();
-        if(user == null) return new UserDto();
-        return UserDto.Map(user);
+        if(user == null) return new ApiResponse<UserDto>(404, $"User id = {id} not found!", new UserDto());
+        return new ApiResponse<UserDto>(200, "", UserDto.Map(user));
     }
 
     public async Task<List<UserDto>> GetAsync(string fullname, string email)

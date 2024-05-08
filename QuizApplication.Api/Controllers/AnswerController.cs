@@ -21,14 +21,14 @@ public class AnswerController : ControllerBase
     public async Task<IActionResult> Create([FromBody] AnswerCreateRequest request)
     {
         var result = await _answerService.CreateAsync(request.Text, request.IsCorrect, request.QuestionId);
-        return Ok(result);
+        return StatusCode(result.StatusCode, result.Data);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] AnswerUpdateRequest request)
     {
         var result = await _answerService.UpdateAsync(id, request.Text, request.IsCorrect, request.QuestionId);
-        return Ok(result);
+        return StatusCode(result.StatusCode);
     }
 
     [HttpDelete("{id}")]
@@ -42,7 +42,7 @@ public class AnswerController : ControllerBase
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
         var result = await _answerService.GetByIdAsync(id);
-        return Ok(result);
+        return StatusCode(result.StatusCode, result.Data);
     }
 
     [HttpGet]

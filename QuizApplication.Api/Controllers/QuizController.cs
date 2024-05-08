@@ -21,14 +21,14 @@ public class QuizController : ControllerBase
     public async Task<IActionResult> Create([FromBody] QuizCreateRequest request)
     {
         var result = await _quizService.CreateAsync(request.Title, request.Description, request.UserId);
-        return Ok(result);
+        return StatusCode(result.StatusCode, result.Data);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] QuizUpdateRequest request)
     {
         var result = await _quizService.UpdateAsync(id, request.Title, request.Description, request.UserId);
-        return Ok(result);
+        return StatusCode(result.StatusCode);
     }
 
     [HttpDelete("{id}")]
@@ -42,7 +42,7 @@ public class QuizController : ControllerBase
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
         var result = await _quizService.GetByIdAsync(id);
-        return Ok(result);
+        return StatusCode(result.StatusCode, result.Data);
     }
 
     [HttpGet]

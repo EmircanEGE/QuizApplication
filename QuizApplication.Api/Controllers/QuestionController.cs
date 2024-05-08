@@ -21,14 +21,14 @@ public class QuestionController : ControllerBase
     public async Task<IActionResult> Create([FromBody] QuestionCreateRequest request)
     {
         var result = await _questionService.CreateAsync(request.Text, request.QuizId);
-        return Ok(result);
+        return StatusCode(result.StatusCode, result.Data);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] QuestionUpdateRequest request)
     {
         var result = await _questionService.UpdateAsync(id, request.Text, request.QuizId);
-        return Ok(result);
+        return StatusCode(result.StatusCode);
     }
 
     [HttpDelete("{id}")]
@@ -42,7 +42,7 @@ public class QuestionController : ControllerBase
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
         var result = await _questionService.GetByIdAsync(id);
-        return Ok(result);
+        return StatusCode(result.StatusCode, result.Data);
     }
 
     [HttpGet]

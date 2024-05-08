@@ -20,31 +20,31 @@ public class AnswerService : IAnswerService
         _questionRepository = questionRepository;
     }
 
-    public async Task<AnswerDto> CreateAsync(string text, bool isCorrect, int questionId)
+    public async Task<ApiResponse<AnswerDto>> CreateAsync(string text, bool isCorrect, int questionId)
     {
         var question = await _questionRepository.GetAsync(x => x.Id == questionId).FirstOrDefaultAsync();
-        if (question == null) return new AnswerDto();
+        if (question == null) return new ApiResponse<AnswerDto>(404, $"Question id = {questionId} not found!", new AnswerDto());
 
         var answer = new Answer(text, isCorrect, questionId);
         await _answerRepository.InsertAsync(answer);
         await _unitOfWork.SaveChangesAsync();
         var result = await _answerRepository.GetAsync(x => x.Id == answer.Id).Include(x => x.Question)
             .FirstOrDefaultAsync();
-        return AnswerDto.Map(result);
+        return new ApiResponse<AnswerDto>(201, "Answer created successfully.", AnswerDto.Map(result));
     }
 
-    public async Task<AnswerDto> UpdateAsync(int id, string text, bool isCorrect, int questionId)
+    public async Task<ApiResponse<AnswerDto>> UpdateAsync(int id, string text, bool isCorrect, int questionId)
     {
         var question = await _questionRepository.GetAsync(x => x.Id == questionId).FirstOrDefaultAsync();
-        if (question == null) return new AnswerDto();
+        if (question == null) return new ApiResponse<AnswerDto>(404, $"Question id = {questionId} not found!", new AnswerDto());
 
         var answer = await _answerRepository.GetAsync(x => x.Id == id).Include(x => x.Question).FirstOrDefaultAsync();
-        if (answer == null) return new AnswerDto();
+        if (answer == null) return new ApiResponse<AnswerDto>(404, $"Answer id = {id} not found!", new AnswerDto());
 
         answer.Update(text, isCorrect, questionId, question);
         _answerRepository.Update(answer);
         await _unitOfWork.SaveChangesAsync();
-        return AnswerDto.Map(answer);
+        return new ApiResponse<AnswerDto>(204, "Answer updated successfully.", AnswerDto.Map(answer));
     }
 
     public async Task DeleteAsync(int id)
@@ -54,12 +54,12 @@ public class AnswerService : IAnswerService
         await _unitOfWork.SaveChangesAsync();
     }
 
-    public async Task<AnswerDto> GetByIdAsync(int id)
+    public async Task<ApiResponse<AnswerDto>> GetByIdAsync(int id)
     {
         var answer = await _answerRepository.GetAsync(x => x.Id == id).Include(x => x.Question)
             .FirstOrDefaultAsync();
-        if (answer == null) return new AnswerDto();
-        return AnswerDto.Map(answer);
+        if (answer == null) return new ApiResponse<AnswerDto>(404, $"Answer id = {id} not found!", new AnswerDto());
+        return new ApiResponse<AnswerDto>(200, "", AnswerDto.Map(answer));
     }
 
     public async Task<List<AnswerDto>> GetAsync(string text, bool? isCorrect, int? questionId)

@@ -21,14 +21,14 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Create([FromBody] UserCreateRequest request)
     {
         var result = await _userService.CreateAsync(request.FullName, request.Email, request.Password);
-        return Ok(result);
+        return StatusCode(result.StatusCode, result.Data);
     }
     
     [HttpPut("{id}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UserUpdateRequest request)
     {
         var result = await _userService.UpdateAsync(id, request.FullName, request.Email, request.Password);
-        return Ok(result);
+        return StatusCode(result.StatusCode);
     }
     
     [HttpDelete("{id}")]
@@ -42,7 +42,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
         var result = await _userService.GetByIdAsync(id);
-        return Ok(result);
+        return StatusCode(result.StatusCode, result.Data);
     }
 
     [HttpGet]
