@@ -9,21 +9,24 @@ public class Answer : BaseEntity
     {
     }
 
-    public Answer(string text, bool isCorrect, int questionId)
+    public Answer(int createdBy, string text, bool isCorrect, int questionId)
     {
+        CreatedBy = createdBy;
         Text = text;
         IsCorrect = isCorrect;
         QuestionId = questionId;
     }
 
-    [Required] public string Text { get; set; }
-
+    public int CreatedBy { get; set; }
+    public int? UpdatedBy { get; set; }
+    public string Text { get; set; }
     public bool IsCorrect { get; set; }
     [ForeignKey("Question")] public int QuestionId { get; set; }
     public virtual Question Question { get; set; }
 
-    public void Update(string text, bool isCorrect, int questionId, Question question)
+    public void Update(int updatedBy, string text, bool isCorrect, int questionId, Question question)
     {
+        UpdatedBy = updatedBy;
         Text = text;
         IsCorrect = isCorrect;
         QuestionId = questionId;

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QuizApplication.Api.Models.Answer;
 using QuizApplication.Application.Services;
@@ -20,14 +21,16 @@ public class AnswerController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] AnswerCreateRequest request)
     {
-        var result = await _answerService.CreateAsync(request.Text, request.IsCorrect, request.QuestionId);
+        var createdBy = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var result = await _answerService.CreateAsync(createdBy, request.Text, request.IsCorrect, request.QuestionId);
         return StatusCode(result.StatusCode);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] AnswerUpdateRequest request)
     {
-        var result = await _answerService.UpdateAsync(id, request.Text, request.IsCorrect, request.QuestionId);
+        var updatedBy = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var result = await _answerService.UpdateAsync(updatedBy, id, request.Text, request.IsCorrect, request.QuestionId);
         if (result.StatusCode == 404) return StatusCode(result.StatusCode, result.Message);
         return StatusCode(result.StatusCode ,result.Data);
     }
