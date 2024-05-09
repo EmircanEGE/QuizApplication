@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using QuizApplication.Core.Models;
+using QuizApplication.Data.Models;
 
 namespace QuizApplication.Data.Repositories;
 

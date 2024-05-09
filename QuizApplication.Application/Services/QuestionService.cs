@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuizApplication.Application.Dtos;
-using QuizApplication.Core.Models;
+using QuizApplication.Application.Models;
 using QuizApplication.Data;
+using QuizApplication.Data.Models;
 using QuizApplication.Data.Repositories;
 
 namespace QuizApplication.Application.Services;
@@ -28,9 +29,7 @@ public class QuestionService : IQuestionService
         var question = new Question(text, quizId);
         await _questionRepository.InsertAsync(question);
         await _unitOfWork.SaveChangesAsync();
-        var result = await _questionRepository.GetAsync(x => x.Id == question.Id).Include(x => x.Quiz)
-            .FirstOrDefaultAsync();
-        return new ApiResponse<QuestionDto>(201, "Question created successfully.", QuestionDto.Map(result));
+        return new ApiResponse<QuestionDto>(201, "Question created successfully.", QuestionDto.Map(question));
     }
 
     public async Task<ApiResponse<QuestionDto>> UpdateAsync(int id, string text, int quizId)
@@ -39,7 +38,8 @@ public class QuestionService : IQuestionService
         if (quiz == null) return new ApiResponse<QuestionDto>(404, $"Quiz id = {quizId} not found!", new QuestionDto());
 
         var question = await _questionRepository.GetAsync(x => x.Id == id).Include(x => x.Quiz).FirstOrDefaultAsync();
-        if (question == null) return new ApiResponse<QuestionDto>(404, $"Question id = {id} not found!", new QuestionDto());
+        if (question == null)
+            return new ApiResponse<QuestionDto>(404, $"Question id = {id} not found!", new QuestionDto());
 
         question.Update(text, quizId, quiz);
         _questionRepository.Update(question);
@@ -57,7 +57,8 @@ public class QuestionService : IQuestionService
     public async Task<ApiResponse<QuestionDto>> GetByIdAsync(int id)
     {
         var question = await _questionRepository.GetAsync(x => x.Id == id).Include(x => x.Quiz).FirstOrDefaultAsync();
-        if (question == null) return new ApiResponse<QuestionDto>(404, "Question id = {id} not found!", new QuestionDto());
+        if (question == null)
+            return new ApiResponse<QuestionDto>(404, "Question id = {id} not found!", new QuestionDto());
         return new ApiResponse<QuestionDto>(200, "", QuestionDto.Map(question));
     }
 

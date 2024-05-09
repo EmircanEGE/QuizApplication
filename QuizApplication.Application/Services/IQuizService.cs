@@ -1,5 +1,5 @@
 ﻿using QuizApplication.Application.Dtos;
-using QuizApplication.Core.Models;
+using QuizApplication.Application.Models;
 
 namespace QuizApplication.Application.Services;
 

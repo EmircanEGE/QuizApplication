@@ -1,14 +1,17 @@
-using Microsoft.EntityFrameworkCore;
-using QuizApplication.Application.Services;
-using QuizApplication.Data;
-using QuizApplication.Data.Repositories;
 using System.Reflection;
 using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using QuizApplication.Api;
+using QuizApplication.Api.Swagger;
+using QuizApplication.Application.Services;
+using QuizApplication.Data;
+using QuizApplication.Data.Repositories;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +45,7 @@ builder.Services.AddDbContext<Context>(options => options.UseNpgsql(postgresSqlC
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IQuizRepository, QuizRepository>();
@@ -53,6 +57,7 @@ builder.Services.AddScoped<IAnswerService, AnswerService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
 builder.Services.AddScoped<IQuizService, QuizService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();

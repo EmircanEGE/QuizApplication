@@ -1,4 +1,4 @@
-﻿using QuizApplication.Core.Models;
+﻿using QuizApplication.Data.Models;
 
 namespace QuizApplication.Application.Dtos;
 
@@ -17,7 +17,7 @@ public class QuizDto : BaseDto
             UpdatedTime = quiz.UpdatedTime,
             Title = quiz.Title,
             Description = quiz.Description,
-            UserId = quiz.UserId,
+            UserId = quiz.UserId
         };
     }
 }

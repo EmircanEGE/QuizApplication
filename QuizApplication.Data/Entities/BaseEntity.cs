@@ -1,4 +1,4 @@
-﻿namespace QuizApplication.Core.Models;
+﻿namespace QuizApplication.Data.Models;
 
 public class BaseEntity
 {

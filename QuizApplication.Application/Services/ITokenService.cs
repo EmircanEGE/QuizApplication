@@ -1,9 +1,8 @@
 ﻿using QuizApplication.Application.Dtos;
 
-namespace QuizApplication.Api
+namespace QuizApplication.Api;
+
+public interface ITokenService
 {
-    public interface ITokenService
-    {
-        string GenerateToken(UserDto user);
-    }
+    string GenerateToken(UserDto user);
 }

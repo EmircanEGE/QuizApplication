@@ -21,7 +21,7 @@ public class AnswerController : ControllerBase
     public async Task<IActionResult> Create([FromBody] AnswerCreateRequest request)
     {
         var result = await _answerService.CreateAsync(request.Text, request.IsCorrect, request.QuestionId);
-        return StatusCode(result.StatusCode, result.Data);
+        return StatusCode(result.StatusCode, result.Message);
     }
 
     [HttpPut("{id}")]

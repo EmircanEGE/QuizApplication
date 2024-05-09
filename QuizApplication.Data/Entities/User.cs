@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace QuizApplication.Core.Models;
+﻿namespace QuizApplication.Data.Models;
 
 public class User : BaseEntity
 {

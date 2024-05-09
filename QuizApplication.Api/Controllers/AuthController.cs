@@ -1,27 +1,25 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using QuizApplication.Api.Models.User;
 using QuizApplication.Application.Services;
 
-namespace QuizApplication.Api.Controllers
+namespace QuizApplication.Api.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class AuthController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    private readonly IAuthService _authService;
+
+    public AuthController(IAuthService authService)
     {
-        private readonly IUserService _userService;
+        _authService = authService;
+    }
 
-        public AuthController(IUserService userService)
-        {
-            _userService = userService;
-        }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
-        {
-            var result = await _userService.AuthenticateAsync(request.Email, request.Password);
-            if(result == null) return Unauthorized("Invalid email or password");
-            return Ok(result.Token);
-        }
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
+    {
+        var result = await _authService.AuthenticateAsync(request.Email, request.Password);
+        if (result == null) return Unauthorized("Invalid email or password");
+        return Ok(result.Token);
     }
 }

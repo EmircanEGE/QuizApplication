@@ -1,5 +1,5 @@
 ﻿using QuizApplication.Application.Dtos;
-using QuizApplication.Core.Models;
+using QuizApplication.Application.Models;
 
 namespace QuizApplication.Application.Services;
 
@@ -9,5 +9,5 @@ public interface IAnswerService
     Task<ApiResponse<AnswerDto>> UpdateAsync(int id, string text, bool isCorrect, int questionId);
     Task DeleteAsync(int id);
     Task<ApiResponse<AnswerDto>> GetByIdAsync(int id);
-    Task<List<AnswerDto>> GetAsync(string text, bool? isCorrect, int? questionId);
+    Task<ApiResponse<List<AnswerDto>>> GetAsync(string text, bool? isCorrect, int? questionId);
 }

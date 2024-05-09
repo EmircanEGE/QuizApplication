@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace QuizApplication.Core.Models;
+namespace QuizApplication.Data.Models;
 
 public class Answer : BaseEntity
 {

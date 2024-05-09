@@ -1,8 +1,7 @@
-﻿namespace QuizApplication.Api.Models.User
+﻿namespace QuizApplication.Api.Models.User;
+
+public class UserLoginRequest
 {
-    public class UserLoginRequest
-    {
-        public string Email { get; set; }
-        public string Password { get; set; }
-    }
+    public string Email { get; set; }
+    public string Password { get; set; }
 }

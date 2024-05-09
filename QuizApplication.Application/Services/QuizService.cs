@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuizApplication.Application.Dtos;
-using QuizApplication.Core.Models;
+using QuizApplication.Application.Models;
 using QuizApplication.Data;
+using QuizApplication.Data.Models;
 using QuizApplication.Data.Repositories;
 
 namespace QuizApplication.Application.Services;
@@ -22,14 +23,12 @@ public class QuizService : IQuizService
     public async Task<ApiResponse<QuizDto>> CreateAsync(string title, string description, int userId)
     {
         var user = await _userRepository.GetAsync(x => x.Id == userId).FirstOrDefaultAsync();
-        if (user == null) return new ApiResponse<QuizDto>(404, $"User id = {userId} not found!", new QuizDto());
+        if (user == null) return new ApiResponse<QuizDto>(404, "User not found!", new QuizDto());
 
         var quiz = new Quiz(title, description, userId);
         await _quizRepository.InsertAsync(quiz);
         await _unitOfWork.SaveChangesAsync();
-        var result = await _quizRepository.GetAsync(x => x.Id == quiz.Id).Include(x => x.User)
-            .FirstOrDefaultAsync();
-        return new ApiResponse<QuizDto>(201, "Quiz created successfully", QuizDto.Map(result));
+        return new ApiResponse<QuizDto>(201, "Quiz created successfully", QuizDto.Map(quiz));
     }
 
     public async Task<ApiResponse<QuizDto>> UpdateAsync(int id, string title, string description, int userId)
