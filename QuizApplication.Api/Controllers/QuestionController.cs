@@ -21,21 +21,21 @@ public class QuestionController : ControllerBase
     public async Task<IActionResult> Create([FromBody] QuestionCreateRequest request)
     {
         var result = await _questionService.CreateAsync(request.Text, request.QuizId);
-        return StatusCode(result.StatusCode, result.Data);
+        return StatusCode(result.StatusCode);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] QuestionUpdateRequest request)
     {
         var result = await _questionService.UpdateAsync(id, request.Text, request.QuizId);
-        return StatusCode(result.StatusCode);
+        return StatusCode(result.StatusCode, result.Data);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        await _questionService.DeleteAsync(id);
-        return NoContent();
+        var result = await _questionService.DeleteAsync(id);
+        return StatusCode(result.StatusCode, result.Message);
     }
 
     [HttpGet("{id}")]
@@ -49,6 +49,6 @@ public class QuestionController : ControllerBase
     public async Task<IActionResult> Get([FromQuery] string text, int? quizId)
     {
         var result = await _questionService.GetAsync(text, quizId);
-        return Ok(result);
+        return StatusCode(result.StatusCode, result.Data);
     }
 }

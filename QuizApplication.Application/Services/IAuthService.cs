@@ -4,5 +4,5 @@ namespace QuizApplication.Application.Services;
 
 public interface IAuthService
 {
-    Task<LoginResponse> AuthenticateAsync(string email, string password);
+    Task<ApiResponse<LoginResponse>> AuthenticateAsync(string email, string password);
 }

@@ -23,43 +23,45 @@ public class QuizService : IQuizService
     public async Task<ApiResponse<QuizDto>> CreateAsync(string title, string description, int userId)
     {
         var user = await _userRepository.GetAsync(x => x.Id == userId).FirstOrDefaultAsync();
-        if (user == null) return new ApiResponse<QuizDto>(404, "User not found!", new QuizDto());
+        if (user == null) return new ApiResponse<QuizDto>(404, "User not found!");
 
         var quiz = new Quiz(title, description, userId);
         await _quizRepository.InsertAsync(quiz);
         await _unitOfWork.SaveChangesAsync();
-        return new ApiResponse<QuizDto>(201, "Quiz created successfully", QuizDto.Map(quiz));
+        return new ApiResponse<QuizDto>(201);
     }
 
     public async Task<ApiResponse<QuizDto>> UpdateAsync(int id, string title, string description, int userId)
     {
         var user = await _userRepository.GetAsync(x => x.Id == userId).FirstOrDefaultAsync();
-        if (user == null) return new ApiResponse<QuizDto>(404, $"User id = {userId} not found!", new QuizDto());
+        if (user == null) return new ApiResponse<QuizDto>(404, "User not found!");
 
         var quiz = await _quizRepository.GetAsync(x => x.Id == id).Include(x => x.User).FirstOrDefaultAsync();
-        if (quiz == null) return new ApiResponse<QuizDto>(404, $"Quiz id = {id} not found!", new QuizDto());
+        if (quiz == null) return new ApiResponse<QuizDto>(404, "Quiz not found!");
 
         quiz.Update(title, description, userId, user);
         _quizRepository.Update(quiz);
         await _unitOfWork.SaveChangesAsync();
-        return new ApiResponse<QuizDto>(204, "Quiz updated successfully.", QuizDto.Map(quiz));
+        return new ApiResponse<QuizDto>(204, QuizDto.Map(quiz));
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task<ApiResponse<bool>> DeleteAsync(int id)
     {
         var quiz = await _quizRepository.GetAsync(x => x.Id == id).FirstOrDefaultAsync();
+        if (quiz == null) return new ApiResponse<bool>(404, "Quiz not found!");
         _quizRepository.Delete(quiz);
         await _unitOfWork.SaveChangesAsync();
+        return new ApiResponse<bool>(204);
     }
 
     public async Task<ApiResponse<QuizDto>> GetByIdAsync(int id)
     {
         var quiz = await _quizRepository.GetAsync(x => x.Id == id).FirstOrDefaultAsync();
-        if (quiz == null) return new ApiResponse<QuizDto>(404, $"Quiz id = {id} not found!", new QuizDto());
-        return new ApiResponse<QuizDto>(200, "", QuizDto.Map(quiz));
+        if (quiz == null) return new ApiResponse<QuizDto>(404, "Quiz not found!");
+        return new ApiResponse<QuizDto>(200, QuizDto.Map(quiz));
     }
-
-    public async Task<List<QuizDto>> GetAsync(string title, string description, int? userId)
+    
+    public async Task<ApiResponse<List<QuizDto>>> GetAsync(string title, string description, int? userId)
     {
         var quizzes = _quizRepository.GetAsync(x => true);
         if (!string.IsNullOrWhiteSpace(title))
@@ -68,6 +70,6 @@ public class QuizService : IQuizService
             quizzes = quizzes.Where(x => x.Description == description);
         if (userId != null)
             quizzes = quizzes.Where(x => x.UserId == userId);
-        return quizzes.Select(x => QuizDto.Map(x)).ToList();
+        return new ApiResponse<List<QuizDto>>(200, quizzes.Select(x => QuizDto.Map(x)).ToList());
     }
 }

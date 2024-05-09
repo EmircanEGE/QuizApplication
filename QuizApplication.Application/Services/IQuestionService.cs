@@ -7,7 +7,7 @@ public interface IQuestionService
 {
     Task<ApiResponse<QuestionDto>> CreateAsync(string text, int quizId);
     Task<ApiResponse<QuestionDto>> UpdateAsync(int id, string text, int quizId);
-    Task DeleteAsync(int id);
+    Task<ApiResponse<bool>> DeleteAsync(int id);
     Task<ApiResponse<QuestionDto>> GetByIdAsync(int id);
-    Task<List<QuestionDto>> GetAsync(string text, int? quizId);
+    Task<ApiResponse<List<QuestionDto>>> GetAsync(string text, int? quizId);
 }

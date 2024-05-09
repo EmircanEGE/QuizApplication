@@ -19,7 +19,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
     {
         var result = await _authService.AuthenticateAsync(request.Email, request.Password);
-        if (result == null) return Unauthorized("Invalid email or password");
-        return Ok(result.Token);
+        if (result.StatusCode == 401) return StatusCode(result.StatusCode, result.Message);
+        return StatusCode(result.StatusCode, result.Data.Token);
     }
 }

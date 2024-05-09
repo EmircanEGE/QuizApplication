@@ -9,6 +9,6 @@ public class AnswerCreateRequestValidator : AbstractValidator<AnswerCreateReques
     {
         RuleFor(x => x.Text).NotEmpty().MaximumLength(500);
         RuleFor(x => x.QuestionId).NotEmpty();
-        RuleFor(x => x.IsCorrect).NotEmpty();
+        RuleFor(x => x.IsCorrect).NotNull();
     }
 }
