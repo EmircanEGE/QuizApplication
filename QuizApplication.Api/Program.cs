@@ -41,6 +41,7 @@ builder.Services.AddFluentValidationAutoValidation().AddValidatorsFromAssembly(A
 
 var postgresSqlConfiguration = builder.Configuration.GetConnectionString("PostgresConnection");
 builder.Services.AddDbContext<Context>(options => options.UseNpgsql(postgresSqlConfiguration));
+builder.Services.AddHttpContextAccessor();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

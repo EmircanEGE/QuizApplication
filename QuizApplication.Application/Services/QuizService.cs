@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using QuizApplication.Application.Dtos;
 using QuizApplication.Application.Models;
 using QuizApplication.Data;
@@ -12,12 +14,16 @@ public class QuizService : IQuizService
     private readonly IQuizRepository _quizRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
+    public int LoggedInUserId;
+    public readonly IHttpContextAccessor _HttpContextAccessor;
 
-    public QuizService(IUserRepository userRepository, IQuizRepository quizRepository, IUnitOfWork unitOfWork)
+    public QuizService(IUserRepository userRepository, IQuizRepository quizRepository, IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
     {
         _userRepository = userRepository;
         _quizRepository = quizRepository;
         _unitOfWork = unitOfWork;
+        _HttpContextAccessor = httpContextAccessor;
+        LoggedInUserId = Convert.ToInt32(_HttpContextAccessor.HttpContext.User.FindFirstValue("userId"));
     }
 
     public async Task<ApiResponse<QuizDto>> CreateAsync(string title, string description, int userId)
@@ -25,7 +31,7 @@ public class QuizService : IQuizService
         var user = await _userRepository.GetAsync(x => x.Id == userId).FirstOrDefaultAsync();
         if (user == null) return new ApiResponse<QuizDto>(404, "User not found!");
 
-        var quiz = new Quiz(title, description, userId);
+        var quiz = new Quiz(LoggedInUserId, title, description, userId);
         await _quizRepository.InsertAsync(quiz);
         await _unitOfWork.SaveChangesAsync();
         return new ApiResponse<QuizDto>(201);
@@ -39,7 +45,7 @@ public class QuizService : IQuizService
         var quiz = await _quizRepository.GetAsync(x => x.Id == id).Include(x => x.User).FirstOrDefaultAsync();
         if (quiz == null) return new ApiResponse<QuizDto>(404, "Quiz not found!");
 
-        quiz.Update(title, description, userId, user);
+        quiz.Update(LoggedInUserId, title, description, userId, user);
         _quizRepository.Update(quiz);
         await _unitOfWork.SaveChangesAsync();
         return new ApiResponse<QuizDto>(204, QuizDto.Map(quiz));

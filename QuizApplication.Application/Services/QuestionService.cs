@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using QuizApplication.Application.Dtos;
 using QuizApplication.Application.Models;
 using QuizApplication.Data;
@@ -12,13 +14,17 @@ public class QuestionService : IQuestionService
     private readonly IQuestionRepository _questionRepository;
     private readonly IQuizRepository _quizRepository;
     private readonly IUnitOfWork _unitOfWork;
+    public int LoggedInUserId;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public QuestionService(IQuestionRepository questionRepository, IUnitOfWork unitOfWork,
-        IQuizRepository quizRepository)
+        IQuizRepository quizRepository, IHttpContextAccessor httpContextAccessor)
     {
         _questionRepository = questionRepository;
         _unitOfWork = unitOfWork;
         _quizRepository = quizRepository;
+        _httpContextAccessor = httpContextAccessor;
+        LoggedInUserId = Convert.ToInt32(_httpContextAccessor.HttpContext.User.FindFirstValue("userId"));
     }
 
     public async Task<ApiResponse<QuestionDto>> CreateAsync(string text, int quizId)
@@ -26,7 +32,7 @@ public class QuestionService : IQuestionService
         var quiz = await _quizRepository.GetAsync(x => x.Id == quizId).FirstOrDefaultAsync();
         if (quiz == null) return new ApiResponse<QuestionDto>(404, "Quiz not found!");
 
-        var question = new Question(text, quizId);
+        var question = new Question(LoggedInUserId, text, quizId);
         await _questionRepository.InsertAsync(question);
         await _unitOfWork.SaveChangesAsync();
         return new ApiResponse<QuestionDto>(201);
@@ -41,7 +47,7 @@ public class QuestionService : IQuestionService
         if (question == null)
             return new ApiResponse<QuestionDto>(404, "Question not found!");
 
-        question.Update(text, quizId, quiz);
+        question.Update(LoggedInUserId, text, quizId, quiz);
         _questionRepository.Update(question);
         await _unitOfWork.SaveChangesAsync();
         return new ApiResponse<QuestionDto>(200, QuestionDto.Map(question));

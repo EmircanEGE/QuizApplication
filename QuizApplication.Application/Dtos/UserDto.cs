@@ -12,6 +12,8 @@ public class UserDto : BaseDto
     {
         return new UserDto
         {
+            CreatedBy = user.CreatedBy,
+            UpdatedBy = user.UpdatedBy,
             Id = user.Id,
             CreatedTime = user.CreatedTime,
             UpdatedTime = user.UpdatedTime,

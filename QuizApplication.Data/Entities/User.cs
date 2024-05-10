@@ -6,8 +6,9 @@ public class User : BaseEntity
     {
     }
 
-    public User(string fullName, string email, string password)
+    public User(int createdBy, string fullName, string email, string password)
     {
+        CreatedBy = createdBy;
         FullName = fullName;
         Email = email;
         Password = password;
@@ -19,8 +20,9 @@ public class User : BaseEntity
 
     public string Password { get; set; }
 
-    public void Update(string fullName, string email, string password)
+    public void Update(int updatedBy, string fullName, string email, string password)
     {
+        UpdatedBy = updatedBy;
         FullName = fullName;
         Email = email;
         Password = password;

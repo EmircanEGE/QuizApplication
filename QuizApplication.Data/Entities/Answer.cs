@@ -17,8 +17,6 @@ public class Answer : BaseEntity
         QuestionId = questionId;
     }
 
-    public int CreatedBy { get; set; }
-    public int? UpdatedBy { get; set; }
     public string Text { get; set; }
     public bool IsCorrect { get; set; }
     [ForeignKey("Question")] public int QuestionId { get; set; }

@@ -21,6 +21,7 @@ public class QuizController : ControllerBase
     public async Task<IActionResult> Create([FromBody] QuizCreateRequest request)
     {
         var result = await _quizService.CreateAsync(request.Title, request.Description, request.UserId);
+        if (result.StatusCode == 404) return StatusCode(result.StatusCode, result.Message);
         return StatusCode(result.StatusCode);
     }
 

@@ -4,8 +4,6 @@ namespace QuizApplication.Application.Dtos;
 
 public class AnswerDto : BaseDto
 {
-    public int CreatedBy { get; set; }
-    public int? UpdatedBy { get; set; }
     public string Text { get; set; }
     public bool IsCorrect { get; set; }
     public int QuestionId { get; set; }

@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.JsonWebTokens;
 using QuizApplication.Application.Dtos;
 using QuizApplication.Application.Models;
 using QuizApplication.Data;
@@ -12,28 +15,32 @@ public class AnswerService : IAnswerService
     private readonly IAnswerRepository _answerRepository;
     private readonly IQuestionRepository _questionRepository;
     private readonly IUnitOfWork _unitOfWork;
-
+    public int LoggedInUserId;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    
     public AnswerService(IUnitOfWork unitOfWork, IAnswerRepository answerRepository,
-        IQuestionRepository questionRepository)
+        IQuestionRepository questionRepository, IHttpContextAccessor httpContextAccessor)
     {
         _unitOfWork = unitOfWork;
         _answerRepository = answerRepository;
         _questionRepository = questionRepository;
+        _httpContextAccessor = httpContextAccessor;
+        LoggedInUserId = Convert.ToInt32(_httpContextAccessor.HttpContext.User.FindFirstValue("userId"));
     }
 
-    public async Task<ApiResponse<AnswerDto>> CreateAsync(int createdBy, string text, bool isCorrect, int questionId)
+    public async Task<ApiResponse<AnswerDto>> CreateAsync(string text, bool isCorrect, int questionId)
     {
         var question = await _questionRepository.GetAsync(x => x.Id == questionId).FirstOrDefaultAsync();
         if (question == null)
             return new ApiResponse<AnswerDto>(404, "Question not found!");
 
-        var answer = new Answer(createdBy, text, isCorrect, questionId);
+        var answer = new Answer(LoggedInUserId, text, isCorrect, questionId);
         await _answerRepository.InsertAsync(answer);
         await _unitOfWork.SaveChangesAsync();
         return new ApiResponse<AnswerDto>(201);
     }
 
-    public async Task<ApiResponse<AnswerDto>> UpdateAsync(int updatedBy, int id, string text, bool isCorrect, int questionId)
+    public async Task<ApiResponse<AnswerDto>> UpdateAsync(int id, string text, bool isCorrect, int questionId)
     {
         var question = await _questionRepository.GetAsync(x => x.Id == questionId).FirstOrDefaultAsync();
         if (question == null)
@@ -42,7 +49,7 @@ public class AnswerService : IAnswerService
         var answer = await _answerRepository.GetAsync(x => x.Id == id).Include(x => x.Question).FirstOrDefaultAsync();
         if (answer == null) return new ApiResponse<AnswerDto>(404, "Answer not found!");
 
-        answer.Update(updatedBy, text, isCorrect, questionId, question);
+        answer.Update(LoggedInUserId, text, isCorrect, questionId, question);
         _answerRepository.Update(answer);
         await _unitOfWork.SaveChangesAsync();
         return new ApiResponse<AnswerDto>(200, AnswerDto.Map(answer));

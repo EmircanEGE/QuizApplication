@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using QuizApplication.Api;
 using QuizApplication.Application.Dtos;
 using QuizApplication.Application.Extensions;
@@ -14,18 +16,22 @@ public class UserService : IUserService
     private readonly ITokenService _tokenService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
+    public int LoggedInUserId;
+    public readonly IHttpContextAccessor _httpContextAccessor;
 
-    public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, ITokenService tokenService)
+    public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, ITokenService tokenService, IHttpContextAccessor httpContextAccessor)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
         _tokenService = tokenService;
+        _httpContextAccessor = httpContextAccessor;
+        LoggedInUserId = Convert.ToInt32(_httpContextAccessor.HttpContext.User.FindFirstValue("userId"));
     }
 
     public async Task<ApiResponse<UserDto>> CreateAsync(string fullName, string email, string password)
     {
         var passwordHash = PasswordHasher.Hash(password);
-        var user = new User(fullName, email, passwordHash);
+        var user = new User(LoggedInUserId, fullName, email, passwordHash);
         await _userRepository.InsertAsync(user);
         await _unitOfWork.SaveChangesAsync();
         return new ApiResponse<UserDto>(201);
@@ -36,7 +42,7 @@ public class UserService : IUserService
         var user = await _userRepository.GetAsync(x => x.Id == id).FirstOrDefaultAsync();
         if (user == null) return new ApiResponse<UserDto>(404, "User not found!");
         var passwordHash = PasswordHasher.Hash(password);
-        user.Update(fullName, email, passwordHash);
+        user.Update(LoggedInUserId, fullName, email, passwordHash);
         _userRepository.Update(user);
         await _unitOfWork.SaveChangesAsync();
         return new ApiResponse<UserDto>(200, UserDto.Map(user));

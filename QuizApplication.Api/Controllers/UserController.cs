@@ -21,6 +21,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Create([FromBody] UserCreateRequest request)
     {
         var result = await _userService.CreateAsync(request.FullName, request.Email, request.Password);
+        if (result.StatusCode == 404) return StatusCode(result.StatusCode, result.Message);
         return StatusCode(result.StatusCode);
     }
 

@@ -12,6 +12,8 @@ public class QuestionDto : BaseDto
     {
         return new QuestionDto
         {
+            CreatedBy = question.CreatedBy,
+            UpdatedBy = question.UpdatedBy,
             Id = question.Id,
             CreatedTime = question.CreatedTime,
             UpdatedTime = question.UpdatedTime,

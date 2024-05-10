@@ -9,8 +9,9 @@ public class Quiz : BaseEntity
     {
     }
 
-    public Quiz(string title, string description, int userId)
+    public Quiz(int createdBy, string title, string description, int userId)
     {
+        CreatedBy = createdBy;
         Title = title;
         Description = description;
         UserId = userId;
@@ -25,8 +26,9 @@ public class Quiz : BaseEntity
 
     public virtual ICollection<Question> Questions { get; set; }
 
-    public void Update(string title, string description, int userId, User user)
+    public void Update(int updatedBy, string title, string description, int userId, User user)
     {
+        UpdatedBy = updatedBy;
         Title = title;
         Description = description;
         UserId = userId;
