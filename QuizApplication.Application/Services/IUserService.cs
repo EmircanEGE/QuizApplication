@@ -9,5 +9,5 @@ public interface IUserService
     Task<ApiResponse<UserDto>> UpdateAsync(int id, string fullName, string email, string password);
     Task<ApiResponse<bool>> DeleteAsync(int id);
     Task<ApiResponse<UserDto>> GetByIdAsync(int id);
-    Task<ApiResponse<List<UserDto>>> GetAsync(string fullname, string email);
+    Task<ApiResponse<List<UserDto>>> GetAsync(string fullname, string email, int page, int pageSize);
 }

@@ -64,13 +64,21 @@ public class UserService : IUserService
         return new ApiResponse<UserDto>(200, UserDto.Map(user));
     }
 
-    public async Task<ApiResponse<List<UserDto>>> GetAsync(string fullname, string email)
+    public async Task<ApiResponse<List<UserDto>>> GetAsync(string fullname, string email, int page, int pageSize)
     {
+        if (page == 0 || pageSize == 0)
+            return new ApiResponse<List<UserDto>>(400, "Page or page size must be greater than 0");
         var user = _userRepository.GetAsync(x => true);
         if (!string.IsNullOrWhiteSpace(fullname))
             user = user.Where(x => x.FullName == fullname);
         if (!string.IsNullOrWhiteSpace(email))
             user = user.Where(x => x.Email == email);
-        return new ApiResponse<List<UserDto>>(200, user.Select(x => UserDto.Map(x)).ToList());
+
+        var userDto = user.Select(x => UserDto.Map(x)).ToList();
+        var totalCount = userDto.Count();
+        var totalPages = (int)Math.Ceiling((decimal)totalCount / pageSize);
+        if (page > totalPages) return new ApiResponse<List<UserDto>>(404, "Page not found");
+        var userPerPage = userDto.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        return new ApiResponse<List<UserDto>>(200, userPerPage);
     }
 }

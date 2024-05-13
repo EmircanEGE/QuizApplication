@@ -67,8 +67,10 @@ public class QuizService : IQuizService
         return new ApiResponse<QuizDto>(200, QuizDto.Map(quiz));
     }
     
-    public async Task<ApiResponse<List<QuizDto>>> GetAsync(string title, string description, int? userId)
+    public async Task<ApiResponse<List<QuizDto>>> GetAsync(string title, string description, int? userId, int page, int pageSize)
     {
+        if (page == 0 || pageSize == 0)
+            return new ApiResponse<List<QuizDto>>(400, "Page or page size must be greater than 0");
         var quizzes = _quizRepository.GetAsync(x => true);
         if (!string.IsNullOrWhiteSpace(title))
             quizzes = quizzes.Where(x => x.Title == title);
@@ -76,6 +78,12 @@ public class QuizService : IQuizService
             quizzes = quizzes.Where(x => x.Description == description);
         if (userId != null)
             quizzes = quizzes.Where(x => x.UserId == userId);
-        return new ApiResponse<List<QuizDto>>(200, quizzes.Select(x => QuizDto.Map(x)).ToList());
+        var quizzesDto = quizzes.Select(x => QuizDto.Map(x)).ToList();
+
+        var totalCount = quizzesDto.Count();
+        var totalPages = (int)Math.Ceiling((decimal)totalCount / pageSize);
+        if (page > totalPages) return new ApiResponse<List<QuizDto>>(404, "Page not found!");
+        var quizzesPerPage = quizzesDto.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        return new ApiResponse<List<QuizDto>>(200, quizzesPerPage);
     }
 }

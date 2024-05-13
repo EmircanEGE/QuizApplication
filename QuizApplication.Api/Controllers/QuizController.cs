@@ -47,9 +47,10 @@ public class QuizController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] string title, string description, int? userId)
+    public async Task<IActionResult> Get([FromQuery] string title, string description, int? userId, int page = 1, int pageSize = 10)
     {
-        var result = await _quizService.GetAsync(title, description, userId);
+        var result = await _quizService.GetAsync(title, description, userId, page, pageSize);
+        if (result.StatusCode >= 400) return StatusCode(result.StatusCode, result.Message);
         return StatusCode(result.StatusCode, result.Data);
     }
 }

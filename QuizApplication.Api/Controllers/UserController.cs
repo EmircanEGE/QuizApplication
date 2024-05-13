@@ -47,9 +47,10 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] string fullName, string email)
+    public async Task<IActionResult> Get([FromQuery] string fullName, string email, int page = 1, int pageSize = 10)
     {
-        var result = await _userService.GetAsync(fullName, email);
+        var result = await _userService.GetAsync(fullName, email, page, pageSize);
+        if (result.StatusCode >= 400) return StatusCode(result.StatusCode, result.Message);
         return StatusCode(result.StatusCode, result.Data);
     }
 }

@@ -70,14 +70,22 @@ public class QuestionService : IQuestionService
         return new ApiResponse<QuestionDto>(200);
     }
 
-    public async Task<ApiResponse<List<QuestionDto>>> GetAsync(string text, int? quizId)
+    public async Task<ApiResponse<List<QuestionDto>>> GetAsync(string text, int? quizId, int page, int pageSize)
     {
+        if (page == 0 || pageSize == 0)
+            return new ApiResponse<List<QuestionDto>>(400, "Page or page size must be greater than 0");
         var question = _questionRepository.GetAsync(x => true).Include(x => x.Quiz);
         if (!string.IsNullOrWhiteSpace(text))
             question = question.Where(x => x.Text == text).Include(x => x.Quiz);
         if (quizId != null)
             question = question.Where(x => x.QuizId == quizId).Include(x => x.Quiz);
-        return new ApiResponse<List<QuestionDto>>(200, question.Select(x => QuestionDto.Map(x)).ToList());
+        var questionDto = question.Select(x => QuestionDto.Map(x)).ToList();
+
+        var totalCount = questionDto.Count;
+        var totalPages = (int)Math.Ceiling((decimal)totalCount / pageSize);
+        if (page > totalPages) return new ApiResponse<List<QuestionDto>>(404, "Page not found!");
+        var questionPerPage = questionDto.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        return new ApiResponse<List<QuestionDto>>(200, questionPerPage);
         
     }
 }

@@ -72,8 +72,10 @@ public class AnswerService : IAnswerService
         return new ApiResponse<AnswerDto>(200, AnswerDto.Map(answer));
     }
 
-    public async Task<ApiResponse<List<AnswerDto>>> GetAsync(string text, bool? isCorrect, int? questionId)
+    public async Task<ApiResponse<List<AnswerDto>>> GetAsync(string text, bool? isCorrect, int? questionId, int page, int pageSize)
     {
+        if (page == 0 || pageSize == 0)
+            return new ApiResponse<List<AnswerDto>>(400, "Page or page size must be greater than 0");
         var answers = _answerRepository.GetAsync(x => true).Include(x => x.Question);
         if (!string.IsNullOrWhiteSpace(text))
             answers = answers.Where(x => x.Text == text).Include(x => x.Question);
@@ -81,6 +83,12 @@ public class AnswerService : IAnswerService
             answers = answers.Where(x => x.IsCorrect == isCorrect).Include(x => x.Question);
         if (questionId != null)
             answers = answers.Where(x => x.QuestionId == questionId).Include(x => x.Question);
-        return new ApiResponse<List<AnswerDto>>(200, answers.Select(x => AnswerDto.Map(x)).ToList());
+        var answerDto = answers.Select(x => AnswerDto.Map(x)).ToList();
+
+        var totalCount = answerDto.Count();
+        var totalPages = (int)Math.Ceiling((decimal)totalCount / pageSize);
+        if (page > totalPages) return new ApiResponse<List<AnswerDto>>(404, "Page not found!");
+        var answerPerPage = answerDto.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        return new ApiResponse<List<AnswerDto>>(200, answerPerPage);
     }
 }
